@@ -60,7 +60,8 @@ class MaskRCNNFPNFeatureExtractor(nn.Module):
         x = self.pooler(x, proposals)
 
         for layer_name in self.blocks:
-            x = F.relu(getattr(self, layer_name)(x))
+            if x.numel() > 0:
+                x = F.relu(getattr(self, layer_name)(x))
 
         return x
 

@@ -245,7 +245,7 @@ class Bottleneck(nn.Module):
             self.downsample = nn.Sequential(
                 Conv2d(
                     in_channels, out_channels,
-                    kernel_size=1, stride=down_stride, bias=False
+                    kernel_size=1, stride=down_stride, bias=False, ibn=True,
                 ),
                 norm_func(out_channels),
             )
@@ -268,6 +268,7 @@ class Bottleneck(nn.Module):
             kernel_size=1,
             stride=stride_1x1,
             bias=False,
+            ibn=True,
         )
         self.bn1 = norm_func(bottleneck_channels)
         # TODO: specify init for the above
@@ -280,12 +281,13 @@ class Bottleneck(nn.Module):
             padding=dilation,
             bias=False,
             groups=num_groups,
-            dilation=dilation
+            dilation=dilation,
+            ibn=True
         )
         self.bn2 = norm_func(bottleneck_channels)
 
         self.conv3 = Conv2d(
-            bottleneck_channels, out_channels, kernel_size=1, bias=False
+            bottleneck_channels, out_channels, kernel_size=1, bias=False, ibn=True
         )
         self.bn3 = norm_func(out_channels)
 
@@ -322,7 +324,7 @@ class BaseStem(nn.Module):
         out_channels = cfg.MODEL.RESNETS.STEM_OUT_CHANNELS
 
         self.conv1 = Conv2d(
-            3, out_channels, kernel_size=7, stride=2, padding=3, bias=False
+            3, out_channels, kernel_size=7, stride=2, padding=3, bias=False, ibn=True
         )
         self.bn1 = norm_func(out_channels)
 

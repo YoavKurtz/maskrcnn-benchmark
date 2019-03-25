@@ -5,10 +5,9 @@ INPUT:
   MAX_SIZE_TEST: 1333
 MODEL:
   META_ARCHITECTURE: "GeneralizedRCNN"
-  WEIGHT: "" # no pretrained model
+  WEIGHT: "catalog://ImageNetPretrained/MSRA/R-50-GN"
   BACKBONE:
     CONV_BODY: "R-50-FPN"
-    FREEZE_CONV_BODY_AT: 0 # finetune all layers
   RESNETS: # use GN for backbone
     BACKBONE_OUT_CHANNELS: 256
     STRIDE_IN_1X1: False
@@ -32,7 +31,9 @@ MODEL:
     POOLER_RESOLUTION: 7
     POOLER_SCALES: (0.25, 0.125, 0.0625, 0.03125)
     POOLER_SAMPLING_RATIO: 2
-    FEATURE_EXTRACTOR: "FPN2MLPFeatureExtractor"
+    CONV_HEAD_DIM: 256
+    NUM_STACKED_CONVS: 4
+    FEATURE_EXTRACTOR: "FPNXconv1fcFeatureExtractor"
     PREDICTOR: "FPNPredictor"
   ROI_MASK_HEAD:
     USE_GN: True # use GN for mask head
@@ -46,16 +47,16 @@ MODEL:
     SHARE_BOX_FEATURE_EXTRACTOR: False
   MASK_ON: True
 DATASETS:
-  TRAIN: ("coco_2014_train", "coco_2014_valminusminival")
-  TEST: ("coco_2014_minival",)
+  TRAIN: ("coco_2017_train",)
+  TEST: ("coco_2017_val",)
 DATALOADER:
   SIZE_DIVISIBILITY: 32
 SOLVER:
   # Assume 8 gpus
-  BASE_LR: 0.02
+  BASE_LR: 0.01
   WEIGHT_DECAY: 0.0001
-  STEPS: (210000, 250000)
-  MAX_ITER: 270000
-  IMS_PER_BATCH: 16
-TEST:
+  STEPS: (300000, 340000)
+  MAX_ITER: 360000
   IMS_PER_BATCH: 8
+TEST:
+  IMS_PER_BATCH: 4

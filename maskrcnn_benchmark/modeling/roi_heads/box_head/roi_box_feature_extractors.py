@@ -82,11 +82,11 @@ class FPN2MLPFeatureExtractor(nn.Module):
         return x
 
 
-class _FPNXconv1fcFeatureExtractor__IBN_Conv2d(nn.Conv2d):
+class _FPNXconv1fcFeatureExtractor__WS_Conv2d(nn.Conv2d):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride=1,
                  padding=0, dilation=1, groups=1, bias=True):
-        super(_FPNXconv1fcFeatureExtractor__IBN_Conv2d, self).__init__(in_channels, out_channels, kernel_size, stride,
+        super(_FPNXconv1fcFeatureExtractor__WS_Conv2d, self).__init__(in_channels, out_channels, kernel_size, stride,
                  padding, dilation, groups, bias)
 
     def forward(self, x):
@@ -127,7 +127,7 @@ class FPNXconv1fcFeatureExtractor(nn.Module):
         xconvs = []
         for ix in range(num_stacked_convs):
             xconvs.append(
-                __IBN_Conv2d(
+                __WS_Conv2d(
                     in_channels,
                     conv_head_dim,
                     kernel_size=3,

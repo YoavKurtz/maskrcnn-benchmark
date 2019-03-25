@@ -5,7 +5,7 @@ INPUT:
   MAX_SIZE_TEST: 1333
 MODEL:
   META_ARCHITECTURE: "GeneralizedRCNN"
-  WEIGHT: "catalog://ImageNetPretrained/MSRA/R-50-GN"
+  WEIGHT: "catalog://WeightStandardization/X-50-GN-WS"
   BACKBONE:
     CONV_BODY: "R-50-FPN"
   RESNETS: # use GN for backbone

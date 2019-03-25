@@ -158,13 +158,31 @@ class ModelCatalog(object):
         "37697547/e2e_keypoint_rcnn_R-50-FPN_1x": "08_42_54.kdzV35ao"
     }
 
+    WS_IMAGENET_URL = "https://cs.jhu.edu/~syqiao/WeightStandardization"
+    WS_IMAGENET_MODELS = {
+        "R-50-GN-WS": "R-50-GN-WS.pkl",
+        "R-101-GN-WS": "R-101-GN-WS.pkl",
+        "X-50-GN-WS": "X-50-GN-WS.pkl",
+        "X-101-GN-WS": "X-101-GN-WS.pkl",
+    }
+
     @staticmethod
     def get(name):
         if name.startswith("Caffe2Detectron/COCO"):
             return ModelCatalog.get_c2_detectron_12_2017_baselines(name)
         if name.startswith("ImageNetPretrained"):
             return ModelCatalog.get_c2_imagenet_pretrained(name)
+        if name.startswith("WeightStandardization"):
+            return ModelCatalog.get_ws_imagenet(name)
         raise RuntimeError("model not present in the catalog {}".format(name))
+
+    @staticmethod
+    def get_ws_imagenet(name):
+        prefix = ModelCatalog.WS_IMAGENET_URL
+        name = name[len("WeightStandardization/"):]
+        name = ModelCatalog.WS_IMAGENET_MODELS[name]
+        url = "/".join([prefix, name])
+        return url
 
     @staticmethod
     def get_c2_imagenet_pretrained(name):

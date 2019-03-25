@@ -29,14 +29,14 @@ class _NewEmptyTensorOp(torch.autograd.Function):
 class Conv2d(torch.nn.Conv2d):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride=1,
-                 padding=0, dilation=1, groups=1, bias=True, ibn=False):
+                 padding=0, dilation=1, groups=1, bias=True, ws=False):
         super(Conv2d, self).__init__(in_channels, out_channels, kernel_size, stride,
                 padding, dilation, groups, bias)
-        self.ibn = ibn
+        self.ws = ws
 
     def forward(self, x):
         if x.numel() > 0:
-            if not self.ibn:
+            if not self.ws:
                 return super(Conv2d, self).forward(x)
             else:
                 weight = self.weight

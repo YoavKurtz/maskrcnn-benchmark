@@ -1,4 +1,51 @@
-# Faster R-CNN and Mask R-CNN in PyTorch 1.0
+# Faster R-CNN and Mask R-CNN with Weight Standardization
+
+This project is our implementation of [Weight Standardization](https://github.com/joe-siyuan-qiao/WeightStandardization) for Faster R-CNN and Mask R-CNN.
+The project is forked from [maskrcnn-benchmark](https://github.com/facebookresearch/maskrcnn-benchmark/).
+Their original README.md is appended at the end.
+
+Weight Standardization is a simple reparameterization method for convolutional layers.
+It enables micro-batch training with Group Normalization (GN) to match the performances of Batch Normalization (BN) trained with large-batch sizes.
+Please see our [arXiv](https://github.com/joe-siyuan-qiao/maskrcnn-benchmark) report for the details.
+If you find this project helpful, please consider citing our paper.
+```
+@article{weightstandardization,
+  author    = {Siyuan Qiao and Huiyu Wang and Chenxi Liu and Wei Shen and Alan Yuille},
+  title     = {Weight Standardization},
+  journal   = {arXiv preprint arXiv:??????????},
+  year      = {2019},
+}
+```
+
+## Performances of Weight Standardization (WS) on COCO
+| Task         | Backbone    | Method  | lr schd | img/gpu | bbox AP | mask AP |
+|--------------|:------------|:-------:|:-------:|:-------:|:-------:|:-------:|
+| Faster R-CNN | ResNet-50   | GN + WS | 1x      | 2       | 39.36   | ---     |
+| Faster R-CNN | ResNet-101  | GN + WS | 1x      | 1       | 41.32   | ---     |
+| Faster R-CNN | ResNeXt-50 (32x4d) | GN + WS | 1x      | 2       | 40.25   | ---     |
+| Faster R-CNN | ResNeXt-101 (32x4d) | GN + WS | 1x      | 1       | 41.90   | ---     |
+| Mask R-CNN   | ResNet-50   | GN + WS | 2x      | 2       | 40.81   | 36.51   |
+| Mask R-CNN   | ResNet-101  | GN + WS | 2x      | 1       | 42.73   | 37.92   |
+| Mask R-CNN   | ResNeXt-50 (32x4d) | GN + WS | 2x      | 2       | 42.00   | 37.28   |
+| Mask R-CNN   | ResNeXt-101 (32x4d) | GN + WS | 2x      | 1       | 43.12   | 38.34   |
+
+## Installation and Training
+For installation, please check [INSTALL.md](INSTALL.md).
+For training, please see the training guidelines in the original readme of [maskrcnn-benchmark](https://github.com/facebookresearch/maskrcnn-benchmark/) appended at the end.
+We list the configuration files that use Weight Standardization as follows where 4GPUs are assumed.
+
+| Task         | Backbone    | Configuration File |
+|--------------|:------------|:------------------:|
+| Faster R-CNN | ResNet-50   | [File Path](configs/gn_baselines/e2e_faster_rcnn_R_50_FPN_Xconv1fc_1x_gn.yaml) |
+| Faster R-CNN | ResNet-101  | [File Path](configs/gn_baselines/e2e_faster_rcnn_R_101_FPN_Xconv1fc_1x_gn.yaml) |
+| Faster R-CNN | ResNeXt-50 (32x4d) | [File Path](configs/gn_baselines/e2e_faster_rcnn_X_50_FPN_Xconv1fc_1x_gn.yaml) |
+| Faster R-CNN | ResNeXt-101 (32x4d) | [File Path](configs/gn_baselines/e2e_faster_rcnn_X_101_FPN_Xconv1fc_1x_gn.yaml) |
+| Mask R-CNN   | ResNet-50   | [File Path](configs/gn_baselines/e2e_mask_rcnn_R_50_FPN_Xconv1fc_2x_gn.yaml) |
+| Mask R-CNN   | ResNet-101  | [File Path](configs/gn_baselines/e2e_mask_rcnn_R_101_FPN_Xconv1fc_2x_gn.yaml) |
+| Mask R-CNN   | ResNeXt-50 (32x4d) | [File Path](configs/gn_baselines/e2e_mask_rcnn_X_50_FPN_Xconv1fc_2x_gn.yaml) |
+| Mask R-CNN   | ResNeXt-101 (32x4d) | [File Path](configs/gn_baselines/e2e_mask_rcnn_X_101_FPN_Xconv1fc_2x_gn.yaml) |
+
+# Original README for Faster R-CNN and Mask R-CNN in PyTorch 1.0
 
 This project aims at providing the necessary building blocks for easily
 creating detection and segmentation models using PyTorch 1.0.
@@ -96,7 +143,7 @@ ln -s /path_to_VOCdevkit_dir datasets/voc
 ```
 
 P.S. `COCO_2017_train` = `COCO_2014_train` + `valminusminival` , `COCO_2017_val` = `minival`
-      
+
 
 You can also configure your own paths to the datasets.
 For that, all you need to do is to modify `maskrcnn_benchmark/config/paths_catalog.py` to
@@ -230,7 +277,7 @@ note = {Accessed: [Insert date here]}
 
 ## Projects using maskrcnn-benchmark
 
-- [RetinaMask: Learning to predict masks improves state-of-the-art single-shot detection for free](https://arxiv.org/abs/1901.03353). 
+- [RetinaMask: Learning to predict masks improves state-of-the-art single-shot detection for free](https://arxiv.org/abs/1901.03353).
   Cheng-Yang Fu, Mykhailo Shvets, and Alexander C. Berg.
   Tech report, arXiv,1901.03353.
 

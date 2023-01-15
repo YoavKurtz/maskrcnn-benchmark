@@ -9,6 +9,11 @@ import torch.distributed as dist
 from maskrcnn_benchmark.utils.comm import get_world_size
 from maskrcnn_benchmark.utils.metric_logger import MetricLogger
 
+import sys
+sys.path.append('/mnt5/yoavkurtz/GroupOrtho/')
+
+import weight_regularization as wr
+
 
 def reduce_loss_dict(loss_dict):
     """
@@ -45,6 +50,11 @@ def do_train(
     checkpoint_period,
     arguments,
 ):
+    if 'reg_type' in arguments.keys():
+        weight_groups_dict = wr.get_layers_to_regularize(model, num_groups_fn=(lambda x: 32))
+    else:
+        weight_groups_dict = None
+
     logger = logging.getLogger("maskrcnn_benchmark.trainer")
     logger.info("Start training")
     meters = MetricLogger(delimiter="  ")
@@ -64,6 +74,10 @@ def do_train(
         targets = [target.to(device) for target in targets]
 
         loss_dict = model(images, targets)
+
+        if weight_groups_dict is not None:
+            ortho_loss = wr.weights_reg(model, arguments['reg_type'], weight_groups_dict)
+            loss_dict['reg_loss'] = arguments['ortho_decay'] * ortho_loss
 
         losses = sum(loss for loss in loss_dict.values())
 

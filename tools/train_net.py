@@ -26,7 +26,7 @@ from maskrcnn_benchmark.utils.logger import setup_logger
 from maskrcnn_benchmark.utils.miscellaneous import mkdir
 
 
-def train(cfg, local_rank, distributed):
+def train(cfg, reg_type, ortho_decay, local_rank, distributed):
     model = build_detection_model(cfg)
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
@@ -43,7 +43,10 @@ def train(cfg, local_rank, distributed):
 
     arguments = {}
     arguments["iteration"] = 0
-
+    if reg_type:
+        print(f'<=========================== GSO IS ENABLED!!!! {reg_type} =========================>')
+        arguments['reg_type'] = reg_type
+        arguments['ortho_decay'] = ortho_decay
     output_dir = cfg.OUTPUT_DIR
 
     save_to_disk = get_rank() == 0
@@ -130,7 +133,8 @@ def main():
         default=None,
         nargs=argparse.REMAINDER,
     )
-
+    parser.add_argument('--reg-type', type=str, default=None)
+    parser.add_argument('--ortho-decay', type=float, default=1e-2)
     args = parser.parse_args()
 
     num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
@@ -164,7 +168,7 @@ def main():
         logger.info(config_str)
     logger.info("Running with config:\n{}".format(cfg))
 
-    model = train(cfg, args.local_rank, args.distributed)
+    model = train(cfg, args.reg_type, args.ortho_decay, args.local_rank, args.distributed)
 
     if not args.skip_test:
         run_test(cfg, model, args.distributed)
